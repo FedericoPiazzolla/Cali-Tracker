@@ -1,3 +1,4 @@
+import ExerciseRow from "@/components/ExerciseRow";
 import { exercises } from "@/data/exercise.mock";
 
 export default function Exercises() {
@@ -7,13 +8,7 @@ export default function Exercises() {
 
       <ul className="flex gap-4">
         {exercises.map((exercise) => (
-          <li
-            key={exercise.id}
-            className="p-4 bg-blue-200 text-black rounded-2xl">
-            <h2>{exercise.name}</h2>
-            <p>{exercise.category}</p>
-            <p>{exercise.tracking}</p>
-          </li>
+          <ExerciseRow key={exercise.id} exercise={exercise} />
         ))}
       </ul>
     </div>
