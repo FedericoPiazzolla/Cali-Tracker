@@ -11,10 +11,15 @@ export default function Exercises() {
     setSelectedCategory(category);
   }
 
-  const fileterdExercises =
+  const filteredExercises =
     selectedCategory === "all"
       ? exercises
       : exercises.filter((e) => e.category === selectedCategory);
+
+  const sortedExercises = [...filteredExercises];
+  sortedExercises.sort(function (a, b) {
+    return a.name.localeCompare(b.name);
+  });
 
   console.log(selectedCategory);
   return (
@@ -26,17 +31,21 @@ export default function Exercises() {
           <button
             key={category}
             onClick={() => handleCategoryChange(category)}
-            className="bg-white text-black px-4 rounded-2xl cursor-pointer">
+            className={` px-4 rounded-2xl cursor-pointer text-black ${category === selectedCategory ? "bg-amber-300 " : "bg-white "}`}>
             {category}
           </button>
         ))}
       </div>
 
-      <ul className="flex gap-4">
-        {fileterdExercises.map((exercise) => (
-          <ExerciseRow key={exercise.id} exercise={exercise} />
-        ))}
-      </ul>
+      {sortedExercises.length === 0 ? (
+        <p>No Exercises found</p>
+      ) : (
+        <ul className="flex gap-4">
+          {sortedExercises.map((exercise) => (
+            <ExerciseRow key={exercise.id} exercise={exercise} />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
