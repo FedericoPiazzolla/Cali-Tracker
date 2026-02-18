@@ -16,8 +16,7 @@ export default function Exercises() {
       ? exercises
       : exercises.filter((e) => e.category === selectedCategory);
 
-  const sortedExercises = [...filteredExercises];
-  sortedExercises.sort(function (a, b) {
+  const sortedExercises = [...filteredExercises].sort(function (a, b) {
     return a.name.localeCompare(b.name);
   });
 
