@@ -20,7 +20,6 @@ export default function Exercises() {
     return a.name.localeCompare(b.name);
   });
 
-  console.log(selectedCategory);
   return (
     <div className="flex flex-col items-center max-w-xl mx-auto px-4">
       <h1>Exercises</h1>
