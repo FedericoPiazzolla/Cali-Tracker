@@ -31,6 +31,10 @@ export default function Exercises() {
     setTracking("reps");
   }
 
+  function handleDeleteExercise(id: string) {
+    setExercises((prev) => prev.filter((e) => e.id !== id));
+  }
+
   function handleCategoryChange(category: string) {
     setSelectedCategory(category);
   }
@@ -139,7 +143,11 @@ export default function Exercises() {
       ) : (
         <ul className="grid w-full max-w-xl grid-cols-1 gap-4 sm:grid-cols-2">
           {sortedExercises.map((exercise) => (
-            <ExerciseRow key={exercise.id} exercise={exercise} />
+            <ExerciseRow
+              key={exercise.id}
+              exercise={exercise}
+              onDelete={handleDeleteExercise}
+            />
           ))}
         </ul>
       )}
