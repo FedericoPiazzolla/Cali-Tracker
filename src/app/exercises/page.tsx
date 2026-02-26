@@ -35,6 +35,8 @@ export default function Exercises() {
   }
 
   function startEdit(exercise: Exercise) {
+    if (editingId && editingId !== exercise.id) return;
+
     setEditingId(exercise.id);
     setEditingName(exercise.name);
   }
@@ -42,6 +44,19 @@ export default function Exercises() {
   function clearEdit() {
     setEditingId(null);
     setEditingName("");
+  }
+
+  function handleEditExercise() {
+    if (!editingId) return;
+    if (!editingName.trim()) return;
+
+    setExercises((prev) =>
+      prev.map((e) =>
+        e.id === editingId ? { ...e, name: editingName.trim() } : e,
+      ),
+    );
+
+    clearEdit();
   }
 
   function handleDeleteExercise(id: string) {
@@ -159,8 +174,14 @@ export default function Exercises() {
             <ExerciseRow
               key={exercise.id}
               exercise={exercise}
+              isEditing={editingId === exercise.id}
+              editingName={editingName}
+              onEditingNameChange={setEditingName}
               onDelete={handleDeleteExercise}
               onEdit={startEdit}
+              onCancel={clearEdit}
+              onSave={handleEditExercise}
+              editLocked={editingId !== null && editingId !== exercise.id}
             />
           ))}
         </ul>
