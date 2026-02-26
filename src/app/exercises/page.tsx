@@ -14,6 +14,9 @@ export default function Exercises() {
     useState<Exercise["category"]>("pull");
   const [tracking, setTracking] = useState<Exercise["tracking"]>("reps");
 
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+
   function handleAddExercise() {
     if (!name.trim()) return;
 
@@ -29,6 +32,16 @@ export default function Exercises() {
     setName("");
     setFormCategory("pull");
     setTracking("reps");
+  }
+
+  function startEdit(exercise: Exercise) {
+    setEditingId(exercise.id);
+    setEditingName(exercise.name);
+  }
+
+  function clearEdit() {
+    setEditingId(null);
+    setEditingName("");
   }
 
   function handleDeleteExercise(id: string) {
@@ -147,6 +160,7 @@ export default function Exercises() {
               key={exercise.id}
               exercise={exercise}
               onDelete={handleDeleteExercise}
+              onEdit={startEdit}
             />
           ))}
         </ul>
