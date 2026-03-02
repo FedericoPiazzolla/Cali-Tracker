@@ -1,11 +1,11 @@
-import { Exercise } from "@/types/exercise";
+import { EditDraft, Exercise } from "@/types/exercise";
 
 type Props = {
   exercise: Exercise;
   editLocked: boolean;
   isEditing: boolean;
-  editingName: string;
-  onEditingNameChange: (value: string) => void;
+  editDraft: EditDraft | null;
+  onDraftChange: (patch: Partial<EditDraft>) => void;
   onDelete: (id: string) => void;
   onEdit: (exercise: Exercise) => void;
   onSave: () => void;
@@ -16,8 +16,8 @@ export default function ExerciseRow({
   exercise,
   isEditing,
   editLocked,
-  editingName,
-  onEditingNameChange,
+  editDraft,
+  onDraftChange,
   onDelete,
   onEdit,
   onSave,
@@ -32,7 +32,7 @@ export default function ExerciseRow({
           <input
             className="w-full rounded-lg border border-black/10 bg-white px-2 py-1.5 text-sm font-medium outline-none focus:border-black/30 focus:ring-2 focus:ring-black/10"
             placeholder="Exercise name"
-            value={editingName}
+            value={editDraft?.name ?? ""}
             type="text"
             autoFocus
             onFocus={(e) => e.currentTarget.select()}
@@ -40,7 +40,7 @@ export default function ExerciseRow({
               if (e.key === "Enter") onSave();
               if (e.key === "Escape") onCancel();
             }}
-            onChange={(e) => onEditingNameChange(e.target.value)}
+            onChange={(e) => onDraftChange({ name: e.target.value })}
           />
         ) : (
           <h2 className="text-sm font-semibold text-black">{exercise.name}</h2>
@@ -98,13 +98,68 @@ export default function ExerciseRow({
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
-        <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
-          {exercise.category}
-        </span>
+        {!isEditing ? (
+          <>
+            <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
+              {exercise.category}
+            </span>
 
-        <span className="rounded-full bg-black/5 px-2 py-1 text-xs font-medium text-black/70">
-          {exercise.tracking}
-        </span>
+            <span className="rounded-full bg-black/5 px-2 py-1 text-xs font-medium text-black/70">
+              {exercise.tracking}
+            </span>
+          </>
+        ) : (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {!isEditing ? (
+              <>
+                <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
+                  {exercise.category}
+                </span>
+
+                <span className="rounded-full bg-black/5 px-2 py-1 text-xs font-medium text-black/70">
+                  {exercise.tracking}
+                </span>
+              </>
+            ) : (
+              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div className="flex flex-col gap-1">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wide text-black/50">
+                    Category
+                  </label>
+                  <select
+                    value={editDraft?.category ?? "pull"}
+                    onChange={(e) =>
+                      onDraftChange({
+                        category: e.target.value as Exercise["category"],
+                      })
+                    }
+                    className="w-full rounded-lg border border-black/10 bg-white px-2 py-1.5 text-sm outline-none focus:border-black/30 focus:ring-2 focus:ring-black/10">
+                    <option value="pull">Pull</option>
+                    <option value="push">Push</option>
+                    <option value="core">Core</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wide text-black/50">
+                    Tracking
+                  </label>
+                  <select
+                    value={editDraft?.tracking ?? "reps"}
+                    onChange={(e) =>
+                      onDraftChange({
+                        tracking: e.target.value as Exercise["tracking"],
+                      })
+                    }
+                    className="w-full rounded-lg border border-black/10 bg-white px-2 py-1.5 text-sm outline-none focus:border-black/30 focus:ring-2 focus:ring-black/10">
+                    <option value="reps">Reps</option>
+                    <option value="seconds">Seconds</option>
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </li>
   );

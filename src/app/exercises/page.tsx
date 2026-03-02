@@ -1,6 +1,6 @@
 "use client";
 import ExerciseRow from "@/components/ExerciseRow";
-import { Exercise } from "@/types/exercise";
+import { Exercise, EditDraft } from "@/types/exercise";
 //import { exercises } from "@/data/exercise.mock";
 import { useState } from "react";
 import useExercises from "@/hooks/useExercises";
@@ -15,7 +15,7 @@ export default function Exercises() {
   const [tracking, setTracking] = useState<Exercise["tracking"]>("reps");
 
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingName, setEditingName] = useState("");
+  const [editingDraft, setEditingDraft] = useState<EditDraft | null>(null);
 
   function handleAddExercise() {
     if (!name.trim()) return;
@@ -38,21 +38,42 @@ export default function Exercises() {
     if (editingId && editingId !== exercise.id) return;
 
     setEditingId(exercise.id);
-    setEditingName(exercise.name);
+    setEditingDraft({
+      name: exercise.name,
+      category: exercise.category,
+      tracking: exercise.tracking,
+    });
   }
 
   function clearEdit() {
     setEditingId(null);
-    setEditingName("");
+    setEditingDraft(null);
+  }
+
+  function onDraftChange(patch: Partial<EditDraft>) {
+    setEditingDraft((prev) => {
+      if (!prev) return prev;
+      return { ...prev, ...patch };
+    });
   }
 
   function handleEditExercise() {
     if (!editingId) return;
-    if (!editingName.trim()) return;
+    if (!editingDraft) return;
+
+    const nextName = editingDraft.name.trim();
+    if (!nextName) return;
 
     setExercises((prev) =>
       prev.map((e) =>
-        e.id === editingId ? { ...e, name: editingName.trim() } : e,
+        e.id === editingId
+          ? {
+              ...e,
+              name: nextName,
+              category: editingDraft.category,
+              tracking: editingDraft.tracking,
+            }
+          : e,
       ),
     );
 
@@ -175,8 +196,8 @@ export default function Exercises() {
               key={exercise.id}
               exercise={exercise}
               isEditing={editingId === exercise.id}
-              editingName={editingName}
-              onEditingNameChange={setEditingName}
+              editDraft={editingDraft}
+              onDraftChange={onDraftChange}
               onDelete={handleDeleteExercise}
               onEdit={startEdit}
               onCancel={clearEdit}
