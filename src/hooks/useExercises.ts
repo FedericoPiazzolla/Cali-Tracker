@@ -1,22 +1,23 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Exercise } from "@/types/exercise";
 import { loadExercises, saveExercises } from "@/lib/storage/exercises";
 
 export default function useExercises() {
-  const [exercises, setExercises] = useState<Exercise[]>([]);
+  // Lazy init: read from localStorage once on first render (client only)
+  const [exercises, setExercises] = useState<Exercise[]>(() => loadExercises());
+
+  // Prevent overwriting localStorage on the very first render
+  // (useful if loadExercises() ever returns [] temporarily or you change init logic)
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
-    const data = loadExercises();
-    setExercises(data)
-  }, [])
+    setHasHydrated(true);
+  }, []);
 
   useEffect(() => {
-    saveExercises(exercises)
-  }, [exercises])
+    if (!hasHydrated) return;
+    saveExercises(exercises);
+  }, [exercises, hasHydrated]);
 
-  return {
-    exercises,
-    setExercises
-  }
-
+  return { exercises, setExercises };
 }
