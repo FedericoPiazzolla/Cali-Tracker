@@ -3,11 +3,13 @@ import { loadSessions, saveSessions } from "@/lib/storage/workout-sessions";
 import { useState, useEffect } from "react";
 
 export default function useSessions() {
-  const [sessions, setSessions] = useState<WorkoutSession[]>(() => loadSessions());
+  // Keep SSR and first client render identical. Load persisted data after mount.
+  const [sessions, setSessions] = useState<WorkoutSession[]>([]);
 
   const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
+    setSessions(loadSessions());
     setHasHydrated(true);
   }, []);
 
