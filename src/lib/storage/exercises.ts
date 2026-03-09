@@ -10,7 +10,7 @@ export function loadExercises() {
   if(raw === null) return [];
 
   try {
-    const result = JSON.parse(raw)
+    const result = JSON.parse(raw) as Exercise[];
     return result;
   } catch (error) {
     return []

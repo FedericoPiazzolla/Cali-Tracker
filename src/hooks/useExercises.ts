@@ -3,14 +3,14 @@ import { Exercise } from "@/types/exercise";
 import { loadExercises, saveExercises } from "@/lib/storage/exercises";
 
 export default function useExercises() {
-  // Lazy init: read from localStorage once on first render (client only)
-  const [exercises, setExercises] = useState<Exercise[]>(() => loadExercises());
+  // Keep SSR and first client render identical. Load persisted data after mount.
+  const [exercises, setExercises] = useState<Exercise[]>([]);
 
-  // Prevent overwriting localStorage on the very first render
-  // (useful if loadExercises() ever returns [] temporarily or you change init logic)
+  // Track when localStorage has been read at least once.
   const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
+    setExercises(loadExercises());
     setHasHydrated(true);
   }, []);
 
